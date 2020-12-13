@@ -1,10 +1,11 @@
 // YOUR NAME HERE
-
+// Kamal Ait Omar
 // === constants ===
 const MAX_QTY = 9;
 const productIdKey = "product";
 const orderIdKey = "order";
 const inputIdKey = "qte";
+const achatIdKey = "achat"
 
 // === global variables  ===
 // the total cost of selected products 
@@ -103,6 +104,7 @@ var createOrderControlBlock = function (index) {
 	var button = document.createElement("button");
 	button.className = 'commander';
 	button.id = index + "-" + orderIdKey;
+	button.addEventListener('click', addToCarte);
 	// add control to control as its child
 	control.appendChild(button);
 	
@@ -121,5 +123,57 @@ var createOrderControlBlock = function (index) {
 var createFigureBlock = function (product) {
 	// this is absolutely not the correct answer !
 	// TODO 
-	return createBlock("figure", "");
+	return createBlock("figure", "<img src=" + product.image + ">");
 }
+
+var achats = document.getElementsByClassName('achats');
+function addToCarte(){
+	btn = event.target;
+	for(var i = 0; i < catalog.length; i++){
+		if(btn.id == i + "-" + orderIdKey){
+			var qty = document.getElementById(i + '-' + inputIdKey)
+			if(qty.value != 0 && qty.value <= MAX_QTY){
+			
+				achats[0].appendChild(createAchatBlock(catalog[i], i, qty.value));
+			}	
+		}
+	}
+}
+
+var createAchatBlock = function (product, index, quant) {
+	// build the div element for achat
+	var block = document.createElement("div");
+	block.className = "achat";
+
+	// set the id for this product
+	block.id = index + "-" + achatIdKey;
+
+	// build the figure part of 'block'
+	block.appendChild(createFigureBlock(product));
+
+	// build the h4 part of 'block'
+	block.appendChild(createBlock("h4", product.name));
+
+	// build and add the div.quantite part of 'block'
+	block.appendChild(createBlock("div", quant, "quantite"))
+
+	// build and add the div.price part of 'block'
+	block.appendChild(createBlock("div", product.price, "prix"));
+
+	var control = document.createElement("div");
+	control.className = "controle";
+	block.appendChild(control);
+
+	// create retirer button
+	var button = document.createElement("button");
+	button.className = 'retirer';
+	button.id = index + "-" + orderIdKey;
+
+	// add control to control as its child
+	control.appendChild(button);
+
+	return block;
+}
+
+
+
