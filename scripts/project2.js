@@ -125,20 +125,47 @@ var createFigureBlock = function (product) {
 	// TODO 
 	return createBlock("figure", "<img src=" + product.image + ">");
 }
+var achats = document.getElementsByClassName('achats')
 
-var achats = document.getElementsByClassName('achats');
+
 function addToCarte(){
 	btn = event.target;
 	for(var i = 0; i < catalog.length; i++){
 		if(btn.id == i + "-" + orderIdKey){
 			var qty = document.getElementById(i + '-' + inputIdKey)
 			if(qty.value != 0 && qty.value <= MAX_QTY){
-			
-				achats[0].appendChild(createAchatBlock(catalog[i], i, qty.value));
+				if(achats[0].children.length == 0){
+					achats[0].appendChild(createAchatBlock(catalog[i], i , qty.value))
+				}
+				else{
+					var exist = false
+					for(x=0; x<achats[0].children.length; x++){
+						if(i == achats[0].children[x].id[0]){
+							var achat = document.getElementById(i + "-" + achatIdKey)
+							achat.children[2].innerHTML = Number(achat.children[2].innerHTML) + Number(qty.value)
+							if(Number(achat.children[2].innerHTML)>9){
+								achat.children[2].innerHTML = 9
+							}
+							exist = true
+						}
+					}
+					if(exist==false){
+						achats[0].appendChild(createAchatBlock(catalog[i], i , qty.value))
+					}
+				}
 			}	
 		}
 	}
+	total=0
+	for(y=0; y<achats[0].children.length; y++){
+		var achat = achats[0].children[y]
+		var price = Number(total) + (Number(achat.children[2].innerHTML)*Number(achat.children[3].innerHTML))	
+		total += price
+	}
+	var montant =  document.getElementById('montant')
+	montant.innerHTML = total
 }
+
 
 var createAchatBlock = function (product, index, quant) {
 	// build the div element for achat
@@ -174,6 +201,4 @@ var createAchatBlock = function (product, index, quant) {
 
 	return block;
 }
-
-
 
