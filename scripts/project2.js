@@ -6,7 +6,7 @@ const productIdKey = "product";
 const orderIdKey = "order";
 const inputIdKey = "qte";
 const achatIdKey = "achat"
-
+const retirerIdKey = "remove"
 // === global variables  ===
 // the total cost of selected products 
 var total = 0;
@@ -125,8 +125,8 @@ var createFigureBlock = function (product) {
 	// TODO 
 	return createBlock("figure", "<img src=" + product.image + ">");
 }
-var achats = document.getElementsByClassName('achats')
 
+var achats = document.getElementsByClassName('achats')
 
 function addToCarte(){
 	btn = event.target;
@@ -143,6 +143,7 @@ function addToCarte(){
 						if(i == achats[0].children[x].id[0]){
 							var achat = document.getElementById(i + "-" + achatIdKey)
 							achat.children[2].innerHTML = Number(achat.children[2].innerHTML) + Number(qty.value)
+
 							if(Number(achat.children[2].innerHTML)>9){
 								achat.children[2].innerHTML = 9
 							}
@@ -151,16 +152,17 @@ function addToCarte(){
 					}
 					if(exist==false){
 						achats[0].appendChild(createAchatBlock(catalog[i], i , qty.value))
+
+						var achat = document.getElementById(i + "-" + achatIdKey)
+						total += (Number(achat.children[2].innerHTML)*Number(achat.children[3].innerHTML))
 					}
 				}
 			}	
 		}
 	}
-	total=0
-	for(y=0; y<achats[0].children.length; y++){
-		var achat = achats[0].children[y]
-		var price = Number(total) + (Number(achat.children[2].innerHTML)*Number(achat.children[3].innerHTML))	
-		total += price
+	total = 0 
+	for(i=0; i<achats[0].children.length;i++){
+		total += Number(achats[0].children[i].children[2].innerHTML) * Number(achats[0].children[i].children[3].innerHTML)
 	}
 	var montant =  document.getElementById('montant')
 	montant.innerHTML = total
@@ -194,7 +196,8 @@ var createAchatBlock = function (product, index, quant) {
 	// create retirer button
 	var button = document.createElement("button");
 	button.className = 'retirer';
-	button.id = index + "-" + orderIdKey;
+	button.id = index + "-" + retirerIdKey;
+	button.addEventListener('click', removeAchat)
 
 	// add control to control as its child
 	control.appendChild(button);
@@ -202,3 +205,44 @@ var createAchatBlock = function (product, index, quant) {
 	return block;
 }
 
+function removeAchat(){
+
+	var id = event.target.id
+	if(id.length == 8){
+		document.getElementById(id[0]+"-"+achatIdKey).remove()
+	}
+	else{
+		document.getElementById(id[0]+id[1]+"-"+achatIdKey).remove()
+	}
+	
+
+	total = 0 
+	for(i=0; i<achats[0].children.length;i++){
+		total += Number(achats[0].children[i].children[2].innerHTML) * Number(achats[0].children[i].children[3].innerHTML)
+	}
+	var montant =  document.getElementById('montant')
+	montant.innerHTML = total
+}
+
+var searchBar = document.getElementById("filter");
+searchBar.addEventListener("keyup", search)
+
+function search(){
+	var input, filter, products, productBlock, productName, i, textValue;
+	input = document.getElementById("filter");
+	filter = input.value.toUpperCase();
+	products = document.getElementById("boutique");
+	productBlock = products.getElementsByClassName("produit")
+	for(i=0; i < productBlock.length; i++){
+		productName = productBlock[i].getElementsByTagName('h4')[0];
+
+		textValue = productName.textContent || productName.innerHTML;
+		
+		if (textValue.toUpperCase().indexOf(filter) > -1) {
+            productBlock[i].style.display = "";
+        } else {
+            productBlock[i].style.display = "none";
+        }
+
+	}
+}
