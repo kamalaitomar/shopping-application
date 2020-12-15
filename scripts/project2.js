@@ -126,9 +126,11 @@ var createFigureBlock = function (product) {
 	return createBlock("figure", "<img src=" + product.image + ">");
 }
 
+
 var achats = document.getElementsByClassName('achats')
 
-function addToCarte(){
+//this function add the achat block to the panel
+function addToCarte(){      
 	btn = event.target;
 	for(var i = 0; i < catalog.length; i++){
 		if(btn.id == i + "-" + orderIdKey){
@@ -152,14 +154,12 @@ function addToCarte(){
 					}
 					if(exist==false){
 						achats[0].appendChild(createAchatBlock(catalog[i], i , qty.value))
-
-						var achat = document.getElementById(i + "-" + achatIdKey)
-						total += (Number(achat.children[2].innerHTML)*Number(achat.children[3].innerHTML))
 					}
 				}
 			}	
 		}
 	}
+	// everytime the button commander clicked we calculat the total for all the achat blocks 
 	total = 0 
 	for(i=0; i<achats[0].children.length;i++){
 		total += Number(achats[0].children[i].children[2].innerHTML) * Number(achats[0].children[i].children[3].innerHTML)
@@ -169,26 +169,27 @@ function addToCarte(){
 }
 
 
+
+/*create the div.achat elment corresponding to the given achat
+* The created element receives the id "index-achat" where index is replaced by param's value
+* @param product (product object) = the product for which the element is created
+* @param index (int) = the index of the product in catalog, used to set the id of the created element
+*/
+
 var createAchatBlock = function (product, index, quant) {
 	// build the div element for achat
 	var block = document.createElement("div");
 	block.className = "achat";
-
 	// set the id for this product
 	block.id = index + "-" + achatIdKey;
-
 	// build the figure part of 'block'
 	block.appendChild(createFigureBlock(product));
-
 	// build the h4 part of 'block'
-	block.appendChild(createBlock("h4", product.name));
-
+	block.appendChild(createBlock("h4", product.description));
 	// build and add the div.quantite part of 'block'
 	block.appendChild(createBlock("div", quant, "quantite"))
-
 	// build and add the div.price part of 'block'
 	block.appendChild(createBlock("div", product.price, "prix"));
-
 	var control = document.createElement("div");
 	control.className = "controle";
 	block.appendChild(control);
@@ -205,8 +206,8 @@ var createAchatBlock = function (product, index, quant) {
 	return block;
 }
 
+// this function delete the achat block
 function removeAchat(){
-
 	var id = event.target.id
 	if(id.length == 8){
 		document.getElementById(id[0]+"-"+achatIdKey).remove()
@@ -214,8 +215,8 @@ function removeAchat(){
 	else{
 		document.getElementById(id[0]+id[1]+"-"+achatIdKey).remove()
 	}
-	
 
+	// everytime the button retirer clicked we calculat the total for all the achat blocks still in the achats block
 	total = 0 
 	for(i=0; i<achats[0].children.length;i++){
 		total += Number(achats[0].children[i].children[2].innerHTML) * Number(achats[0].children[i].children[3].innerHTML)
@@ -223,6 +224,7 @@ function removeAchat(){
 	var montant =  document.getElementById('montant')
 	montant.innerHTML = total
 }
+
 
 var searchBar = document.getElementById("filter");
 searchBar.addEventListener("keyup", search)
